@@ -2,7 +2,8 @@ import networkx as nx
 import matplotlib.pylab as plt
 import numpy as np
 import pickle
-
+import AlgorithmMethods as algorithmMethods
+from Node import Node
 
 def loadData():
     # load graph information
@@ -15,15 +16,20 @@ def initialize(G, pos, start, goal):
     # define start and goal nodes
     color_map = []
     node_size = []
-    #.add_nodes_from(pos.keys())
-    #for n, p in pos.iteritems():
-     #   G.node[n]['pos'] = p
+
+    #ojo a este dato
+    #G.add_nodes_from(pos.keys())
+   
     
     
     for node in enumerate(G):
         # start node
-        lista = list(G.edges(node))
-        print ( node[0],"  " ,node[1]," : " ,lista[0] )
+        
+        nodonuevo = Node(node[0],pos[node[1]],list(G.edges(node)),"null");
+        print nodonuevo.__str__();
+        nodonuevo.define_parent("xqc")
+        print ("nuevos padres son ",nodonuevo.parent)
+
         if node[1] == start:
             color_map.append('green')
             node_size.append(200)
@@ -37,10 +43,10 @@ def initialize(G, pos, start, goal):
             node_size.append(50)
 
     # plot graph
-    nx.draw_networkx(G, pos=pos, with_labels=False, node_color=color_map, node_size=node_size)
+    '''nx.draw_networkx(G, pos=pos, with_labels=False, node_color=color_map, node_size=node_size)
     plt.xticks(np.arange(0, 20))
     plt.yticks(np.arange(0, 20))
-    plt.show()
+    plt.show()'''
 
 
 
@@ -66,11 +72,13 @@ def main():
     G, pos = loadData()
     start_node = (2,19)
     goal_node = (10,10)
+    algorithmMethods.execute_heuristich_funtion()
+  
     initialize(G, pos, start_node, goal_node)
 
     ''' you have to develop the rest of the functions '''
     # searchPath()
-
+   
     # plotPath()
 
 
