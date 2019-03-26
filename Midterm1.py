@@ -5,17 +5,18 @@ import pickle
 
 
 class Node():
-    def __init__(self,name,pos, children, partent):
-        self.name = name
-        self.pos = pos
-        self.children = [x[1] for x in children]
-        self.partent = partent    
+    def __init__(self,pos, children, parent,cost_total):
+        
+        self.pos = pos                        
+        self.children=[child[1] for child in children if (child[1]!=parent and child[1][1]<=pos[1])  ]          
+        self.parent = parent
+        self.cost_total=cost_total
     
     def define_parent(self,parent):
         self.parent = parent
 
     def __str__(self):
-         return 'name :{} position: {}  childrens: {}  parents {}'.format(self.name,self.pos,self.children, self.partent)   
+         return ' position: {}  childrens: {}  parents {}'.format(self.pos,self.children, self.parent)   
 
 def loadData():
     # load graph information
@@ -37,10 +38,10 @@ def initialize(G, pos, start, goal):
     for node in enumerate(G):
         # start node
         
-        nodonuevo = Node(node[0],pos[node[1]],list(G.edges(node)),"null");
-        print nodonuevo.__str__();
+        ''' nodonuevo = Node(node[1],list(G.edges(node[1])),"null",0)
+        print nodonuevo.__str__()
         nodonuevo.define_parent("xqc")
-        print ("nuevos padres son ",nodonuevo.parent)
+        print ("nuevos padres son ",nodonuevo.parent)'''
 
         if node[1] == start:
             color_map.append('green')
@@ -65,11 +66,17 @@ def initialize(G, pos, start, goal):
 # def heuristic():
 #     h = "your heuristic estimate"
 #     return h
-def execute_heuristich_funtion():
-    print "executing execute_heuristich_funtion"
+def heuristich_funtion(point,point2):
+    return abs(point[0] - point2[0]) + abs(point[1]-point2[0])
 
 # def getNeighbors():
 #     return "list of neighors"
+def getall_possible_children(current_point,goal_point):
+    lista_possible_ways ={}
+    
+    for child in current_point.children:
+        lista_possible_ways[(current_point.cost_total+heuristich_funtion(child,goal_point))]=child
+    return lista_possible_ways    
 
 
 # def searchPath(G):
@@ -77,8 +84,33 @@ def execute_heuristich_funtion():
 
 
         
-def algotith_a_star():
-    execute_heuristich_funtion()
+def algotith_a_star(startpoint,goal,G):
+    print "running"
+    openlist = list()
+    closetlist = list()
+    current = Node(startpoint,list(G.edges(startpoint)),"zero",0)
+   
+    openlist.append(current)
+    openlist.remove(current)
+    ways=getall_possible_children(current,goal)
+    if ways:
+        next_point =ways[min(ways.keys())]
+        for key,val in ways.items():
+            if val == next_point:
+                openlist.append(Node(val,list(G.edges(val)),current.pos,1+ min(ways.keys())))   
+        
+        
+    closetlist.append(current) 
+    for node in openlist:
+        print "openlsit",node.__str__()   
+    for node in closetlist:
+        print node.__str__()       
+    
+    
+    #While the open set is not empty
+    
+
+    #execute_heuristich_funtion()
     print "executing algotith_a_star"    
 
 
@@ -92,10 +124,11 @@ def main():
     G, pos = loadData()
     start_node = (2,19)
     goal_node = (10,10)
-    algotith_a_star()
-  
-    initialize(G, pos, start_node, goal_node)
+    #algotith_a_star()
+    algotith_a_star(start_node,goal_node,G)
 
+    initialize(G, pos, start_node, goal_node)
+    
     ''' you have to develop the rest of the functions '''
     # searchPath()
    
