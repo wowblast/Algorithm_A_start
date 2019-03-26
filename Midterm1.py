@@ -2,8 +2,20 @@ import networkx as nx
 import matplotlib.pylab as plt
 import numpy as np
 import pickle
-import AlgorithmMethods as algorithmMethods
-from Node import Node
+
+
+class Node():
+    def __init__(self,name,pos, children, partent):
+        self.name = name
+        self.pos = pos
+        self.children = [x[1] for x in children]
+        self.partent = partent    
+    
+    def define_parent(self,parent):
+        self.parent = parent
+
+    def __str__(self):
+         return 'name :{} position: {}  childrens: {}  parents {}'.format(self.name,self.pos,self.children, self.partent)   
 
 def loadData():
     # load graph information
@@ -43,17 +55,18 @@ def initialize(G, pos, start, goal):
             node_size.append(50)
 
     # plot graph
-    '''nx.draw_networkx(G, pos=pos, with_labels=False, node_color=color_map, node_size=node_size)
+    nx.draw_networkx(G, pos=pos, with_labels=False, node_color=color_map, node_size=node_size)
     plt.xticks(np.arange(0, 20))
     plt.yticks(np.arange(0, 20))
-    plt.show()'''
+    plt.show()
 
 
 
 # def heuristic():
 #     h = "your heuristic estimate"
 #     return h
-
+def execute_heuristich_funtion():
+    print "executing execute_heuristich_funtion"
 
 # def getNeighbors():
 #     return "list of neighors"
@@ -61,6 +74,13 @@ def initialize(G, pos, start, goal):
 
 # def searchPath(G):
 #     return path
+
+
+        
+def algotith_a_star():
+    execute_heuristich_funtion()
+    print "executing algotith_a_star"    
+
 
 
 # def plotPath(G, path):
@@ -72,7 +92,7 @@ def main():
     G, pos = loadData()
     start_node = (2,19)
     goal_node = (10,10)
-    algorithmMethods.execute_heuristich_funtion()
+    algotith_a_star()
   
     initialize(G, pos, start_node, goal_node)
 
