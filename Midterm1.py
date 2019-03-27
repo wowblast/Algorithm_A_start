@@ -2,6 +2,7 @@ import networkx as nx
 import matplotlib.pylab as plt
 import numpy as np
 import pickle
+import math
 
 
 class Node():
@@ -45,7 +46,7 @@ def initialize(G, pos, start, goal,final_path):
         
         if (node[1] in final_path) and node[1] != start:
             color_map.append('yellow')
-            node_size.append(100)
+            node_size.append(20)
         elif node[1] == start:
             color_map.append('green')
             node_size.append(200)
@@ -71,7 +72,9 @@ def initialize(G, pos, start, goal,final_path):
 # def heuristic():
    
 def heuristic_funtion(point,point2):
-    return abs(point[0] - point2[0]) + abs(point[1]-point2[0])
+    #return abs(point[0] - point2[0]) + abs(point[1]-point2[0])
+    return math.sqrt((point[0] - point2[0])**2 + (point[1] - point2[1])**2) 
+    #return max([abs(point[0] - point2[0]) , abs(point[1]-point2[0])])
 
 # def getNeighbors():
 #     
@@ -162,10 +165,11 @@ def main():
     #initial nodes
     G, pos = loadData()
     start_node = (0,18)
-    goal_node = (15,0)
+    goal_node = (0,17)
     
     # searchPath()
     all_path,arrive =algorithm_a_star (start_node,goal_node,G)
+    print arrive
    
    
     final_path =[]
