@@ -31,8 +31,7 @@ def initialize(G, pos, start, goal,final_path):
     color_map = []
     node_size = []
 
-    #ojo a este dato
-    #G.add_nodes_from(pos.keys())
+    
    
     
     
@@ -70,19 +69,18 @@ def initialize(G, pos, start, goal,final_path):
 
 
 # def heuristic():
-#     h = "your heuristic estimate"
-#     return h
-def heuristich_funtion(point,point2):
-    return 1+abs(point[0] - point2[0]) + abs(point[1]-point2[0])
+   
+def heuristic_funtion(point,point2):
+    return abs(point[0] - point2[0]) + abs(point[1]-point2[0])
 
 # def getNeighbors():
-#     return "list of neighors"
-def getall_possible_children(current_point,goal_point,G):
+#     
+def getNeighbors(current_point,goal_point,G):
     lista_possible_ways =[]
     
     for child in current_point.children:
-        lista_possible_ways.append(Node(child,list(G.edges(child)),current_point.pos,1+current_point.cost_total,(heuristich_funtion(child,goal_point))))
-        #(current_point.cost_total+heuristich_funtion(child,goal_point))
+        lista_possible_ways.append(Node(child,list(G.edges(child)),current_point.pos,1+current_point.cost_total,(heuristic_funtion(child,goal_point))))
+        
     return  lista_possible_ways 
 
 
@@ -91,45 +89,43 @@ def getall_possible_children(current_point,goal_point,G):
 
 
         
-def algotith_a_star(startpoint,goal,G):
-    print "running"
+def algorithm_a_star(startpoint,goal,G):
+    #define empty list
     openlist =[]
     closetlist = []
-    current = Node(startpoint,list(G.edges(startpoint)),(-8,-8),0,heuristich_funtion(startpoint,goal))
+    current = Node(startpoint,list(G.edges(startpoint)),(-8,-8),0,heuristic_funtion(startpoint,goal))
    
     openlist.append (current)
+    #While the open set is not empty
     while  openlist:
-        #print len(openlist)
-        print current.__str__()
+        
+        arrive = False
+        
         if current.pos == goal:
-            
+            arrive = True
             break
         else:
             closetlist.append(current)  
             if current.children == []:
-                
-                for x in range(len(openlist)):                    
-                    
-                    if openlist[x].pos ==current.pos:   
+                if openlist==[]:
+                    break                
+                for x in range(len(openlist)-1,-1,-1):
+                   
+                    if openlist[x].pos == current.pos:                        
                         
                         del openlist[x]
+                if openlist==[]:
+                    continue       
                 next_point =min([child.heuristic for child in openlist])
                                     
                 for child in openlist:
                     if child.heuristic == next_point:
-                        current =  child
-                       
-                                        
-             
-                            
-                            
-            elif openlist:
-                
-                
-                        
-                openlist.extend( getall_possible_children(current,goal,G))
-                for x in range(0,len(openlist)-1):
-                    #print openlist[x].pos , current.pos
+                        current =  child                                     
+                                               
+            elif openlist:                                                
+                openlist.extend( getNeighbors(current,goal,G))
+                for x in range(len(openlist)-1,-1,-1):
+                    
                     if openlist[x].pos == current.pos:                        
                         
                         del openlist[x]
@@ -139,68 +135,50 @@ def algotith_a_star(startpoint,goal,G):
                 
                 for child in openlist:
                     if child.heuristic == next_point:
-                        current =  child
+                        current =  child              
                
-            
-
-                    
-                
             else:
                 break 
-            
-        
-
-    for node in openlist:
-        print "openlist",node.__str__()   
-    for node in closetlist:
-        print node.__str__()
-    return closetlist          
+    return closetlist, arrive  
     
-    
-    #While the open set is not empty
-    
-
-    #execute_heuristich_funtion()
-    
-
+# set the path from initial node to the final
 def path(list_path,start_goal):
     all_path =[]
     tail = list_path[len(list_path)-1].parent
     all_path.append(list_path[len(list_path)-1].pos)
     all_path.append(tail)
     while tail !=(-8,-8):
-        for child in list_path:
-            if child.pos == tail:
-                tail = child.parent
-                if tail != (-8,-8) or tail != start_goal:
+        for x in range(len(list_path)-1,-1,-1):
+            if list_path[x].pos == tail:
+                tail = list_path[x].parent
+                if tail != (-8,-8) or tail != start_goal :
+                    
                     all_path.append(tail)
+                    continue
                 
     return all_path
 
-# def plotPath(G, path):
-#     nx.draw("show the path within the graph")
-#     print path
-
-
 def main():
+    #initial nodes
     G, pos = loadData()
-    start_node = (2,19)
-    goal_node = (10,10)
-    #algotith_a_star()
-    all_path =algotith_a_star(start_node,goal_node,G)
-    #current = Node(start_node,list(G.edges(start_node)),(-8,-8),0,heuristich_funtion(start_node,goal_node))
-    final_path =path(all_path,start_node)
-    for x in range(len(final_path)-2) :
-        print final_path[x]
-    initialize(G, pos, start_node, goal_node,final_path)
-    '''lista = getall_possible_children(current,goal_node,G)
-    for child in lista:
-        print child.__str__()
-    you have to develop the rest of the functions '''
+    start_node = (0,18)
+    goal_node = (15,0)
+    
     # searchPath()
+    all_path,arrive =algorithm_a_star (start_node,goal_node,G)
    
-    # plotPath()
-
+   
+    final_path =[]
+    if all_path  and arrive:
+        final_path =path(all_path,start_node)
+    elif all_path and not arrive:
+        for child in all_path:
+            final_path.append(child.pos)    
+       
+   
+    # plotPath()    
+    initialize(G, pos, start_node, goal_node,final_path)
+       
 
 
 # when you call the script, it will start here
